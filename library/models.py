@@ -15,7 +15,7 @@ class Livro(models.Model):
     gender = models.CharField(max_length=150)
     publication_year = models.IntegerField()
     avaiable = models.IntegerField()
-    cover = models.ImageField(upload_to='images/')
+    cover = models.ImageField(upload_to='images/', blank=True, null=True)
 
     def emprestimo(self):
         if self.avaiable > 0:
