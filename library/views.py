@@ -1,6 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView, CreateView
-from django.views.generic.edit import UpdateView
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView
 from .models import Livro
 from .forms import LivroForm
 from django.urls import reverse_lazy
@@ -25,6 +24,12 @@ class LivroUpdateView(UpdateView):
     template_name = 'livros/livro_update.html'
     form_class = LivroForm
     success_url = reverse_lazy('livros_list')
+
+class LivroDetailView(DetailView):
+    template_name = 'livros/livro_detail.html'
+    model = Livro
+    context_object_name = 'livro'
+
 
 
 

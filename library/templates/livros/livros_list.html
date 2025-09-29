@@ -14,7 +14,7 @@
         <tbody>
             {% for livro in livros %}
             <tr>
-                <td>{{livro.title}}</td>
+                <td><a href="{% url 'livro_detail' livro.id%}" style="text-decoration: none;">{{livro.title}}</a></td>
                 <td>{{livro.avaiable}}</td>
                 <td>
                     <a class="btn btn-primary" href="{% url 'livro_update' livro.id%}" role="button">Editar</a>

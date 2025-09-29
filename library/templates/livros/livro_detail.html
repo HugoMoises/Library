@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Detalhes do Livro {% endblock %}
+
+{% block content %}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-sm" style="max-width: 700px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                {% if livro.cover %}
+                    <img src="{{ livro.cover.url }}" class="img-fluid rounded-start" alt="Capa do Livro">
+                {% else %}
+                    <img src="{% static 'images/default_cover.png' %}" class="img-fluid rounded-start" alt="Capa não disponível">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h3 class="card-title fw-bold mb-3">{{ livro.title }}</h3>
+                    <p class="mb-2"><strong>Autor:</strong> {{ livro.author }}</p>
+                    <p class="mb-2"><strong>Gênero:</strong> {{ livro.gender }}</p>
+                    <p class="mb-2"><strong>Ano de Publicação:</strong> {{ livro.year_publication }}</p>
+                    <p class="mb-2"><strong>Disponível:</strong> {{ livro.avaiable }}</p>
+                    <a href="{% url 'livros_list' %}" class="btn btn-primary mt-3">Voltar à lista</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
