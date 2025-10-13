@@ -61,6 +61,11 @@ class EmprestimoCreateView(CreateView):
             form.add_error(None, 'Não há cópia disponível para empréstimo deste livro.')
             return super().form_invalid(form)
 
+class EmprestimoUpdateView(UpdateView):
+    model = Emprestimo
+    template_name = 'emprestimos/emprestimo_update.html'
+    form_class = EmprestimoForm
+    success_url = reverse_lazy('emprestimos_list')
 
 
 
