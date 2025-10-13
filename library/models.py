@@ -24,6 +24,10 @@ class Livro(models.Model):
             return True
         return False
 
+    def devolver(self):
+        self.avaiable += 1
+        self.save()
+
     def __str__(self):
         return f"{self.title} by {self.author}"
 

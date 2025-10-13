@@ -67,6 +67,16 @@ class EmprestimoUpdateView(UpdateView):
     form_class = EmprestimoForm
     success_url = reverse_lazy('emprestimos_list')
 
+    def form_valid(self, form):
+        emprestimo = form.save(commit=False)
+        livro = emprestimo.book
+
+        if emprestimo.status == 'returned':
+            livro.devolver()
+
+        emprestimo.save()
+        return super().form_valid(form)
+
 
 
 
