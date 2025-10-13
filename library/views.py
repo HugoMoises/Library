@@ -49,6 +49,18 @@ class EmprestimoCreateView(CreateView):
     form_class = EmprestimoForm
     success_url = reverse_lazy('emprestimos_list')
 
+    def form_valid(self, form):
+        emprestimo = form.save(commit=False)
+        livro = emprestimo.book
+
+        if livro.avaiable > 0:
+            livro.emprestimo()
+            emprestimo.save()
+            return super().form_valid(form)
+        else:
+            form.add_error(None, 'Não há cópia disponível para empréstimo deste livro.')
+            return super().form_invalid(form)
+
 
 
 

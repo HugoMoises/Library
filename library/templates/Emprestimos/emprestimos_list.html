@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %} Emprestimos de Livros {% endblock %}
+
+{% block content %}
+    <h1>Livros disponíveis para empréstimo</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Livro</th>
+            <th scope="col">Usuário</th>
+            <th scope="col">Status</th>
+            <th scope="col">Ações</th>
+        </tr>
+        </thead> 
+        <tbody>
+            {% for emprestimo in emprestimos %}
+            <tr>
+                <td>{{emprestimo.book.title}}</td>
+                <td>{{emprestimo.person.name}}</td>
+                <td>{{emprestimo.status}}</td>
+                <td>
+                    <a class="btn btn-primary" href="#" role="button">Editar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a class="btn btn-secondary" href="{% url 'emprestimo_create' %}" role="button">Registrar Empréstimo</a>
+{% endblock %}

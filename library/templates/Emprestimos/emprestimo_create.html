@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %} Registrar Empréstimo {% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div style="text-align: center;" class="container">
+            <h1>Empréstimo de Livros</h1>
+            {{form.as_p}}
+            <button class="btn btn-success" type="submit">Enviar</button>
+        </div>
+
+    </form>
+{% endblock %}
