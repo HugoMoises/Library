@@ -16,7 +16,8 @@
         <thead>
           <tr>
             <th scope="col">Título</th>
-            <th scope="col">Disponível</th>
+            <th scope="col">Autor</th>
+            <th scope="col">Gênero</th>
             <th scope="col">Ações</th>
           </tr>
         </thead> 
@@ -24,7 +25,8 @@
             {% for livro in livros %}
             <tr>
                 <td><a href="{% url 'livro_detail' livro.id%}" style="text-decoration: none;">{{livro.title}}</a></td>
-                <td>{{livro.avaiable}}</td>
+                <td>{{livro.author}}</td>
+                <td>{{livro.gender}}</td>
                 <td>
                     <a class="btn btn-primary" href="{% url 'livro_update' livro.id%}" role="button">Editar</a>
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{livro.id}}">
