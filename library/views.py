@@ -14,6 +14,9 @@ class LivroListView(ListView):
     template_name = 'livros/livros_list.html'
     model = Livro
     context_object_name = 'livros'
+    paginate_by = 10
+
+
     def get_queryset(self):
         title = self.request.GET.get('title')
 
