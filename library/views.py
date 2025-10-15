@@ -14,6 +14,16 @@ class LivroListView(ListView):
     template_name = 'livros/livros_list.html'
     model = Livro
     context_object_name = 'livros'
+    def get_queryset(self):
+        title = self.request.GET.get('title')
+
+        if title:
+            livros = Livro.objects.filter(title__icontains=title)
+        else:
+            livros = Livro.objects.all()
+            
+        return livros
+
 
 class LivroCreateView(CreateView):
     model = Livro
@@ -42,6 +52,7 @@ class EmprestimoListView(ListView):
     template_name = 'emprestimos/emprestimos_list.html'
     model = Emprestimo
     context_object_name = 'emprestimos'
+
 
 class EmprestimoCreateView(CreateView):
     model = Emprestimo
