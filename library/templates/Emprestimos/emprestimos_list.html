@@ -3,6 +3,15 @@
 
 {% block content %}
     <h1>Empréstimos registrados</h1>
+    <hr>
+    <div class="container-fluid">
+        <form action="" method="get" class="d-flex">
+          <input class="form-control me-2" type="text" name="status" id="" value="{{request.GET.status}}" placeholder="Busque pelo status do empréstimo" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Buscar</button>
+          <a href="{% url 'emprestimos_list' %}" class="btn btn-outline-dark">Limpar</a>
+        </form>
+    </div>
+    <hr>
     <table class="table">
         <thead>
         <tr>

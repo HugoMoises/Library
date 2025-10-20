@@ -17,6 +17,7 @@ class LivroListView(ListView):
     paginate_by = 10
 
 
+    #Busca pelo título do livro
     def get_queryset(self):
         title = self.request.GET.get('title')
 
@@ -56,6 +57,18 @@ class EmprestimoListView(ListView):
     model = Emprestimo
     context_object_name = 'emprestimos'
     paginate_by = 10
+
+
+    #Busca pelo status do empréstimo
+    def get_queryset(self):
+        status = self.request.GET.get('status')
+
+        if status:
+            emprestimos = Emprestimo.objects.filter(status__icontains=status) 
+        else:
+            emprestimos = Emprestimo.objects.all()
+        
+        return emprestimos
 
 
 class EmprestimoCreateView(CreateView):
