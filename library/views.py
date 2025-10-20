@@ -55,6 +55,7 @@ class EmprestimoListView(ListView):
     template_name = 'emprestimos/emprestimos_list.html'
     model = Emprestimo
     context_object_name = 'emprestimos'
+    paginate_by = 10
 
 
 class EmprestimoCreateView(CreateView):
