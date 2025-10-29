@@ -32,6 +32,23 @@
               </li>
             </ul>
           </div>
+          {% if user.is_authenticated %}
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ user.get_username }}
+              </a>
+              <ul class="dropdown-menu">
+                <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <li><button type="submit" class="dropdown-item">Sair</button></li> 
+                </form>
+              </ul>
+            </li>
+          </ul>
+          {% else %}
+          <a class="btn btn-success" href="{% url 'login' %}">Login</a>
+          {% endif %}
         </div>
       </nav>
     {% block content %}
