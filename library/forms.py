@@ -1,5 +1,9 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 from .models import Livro, Emprestimo
+
+User = get_user_model()
 
 class LivroForm(forms.ModelForm):
     class Meta:
@@ -26,4 +30,23 @@ class EmprestimoForm(forms.ModelForm):
             'book' : forms.Select(attrs={'class': 'form-control'}),
             'return_date' : forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'status' : forms.Select(attrs={'class': 'form-control'}),
+        }
+
+# Registro de Usuário
+class RegisterForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+
+        widgets = {
+            'username' : forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name' : forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name' : forms.TextInput(attrs={'class': 'form-control'}),
+            'email' : forms.EmailInput(attrs={'class': 'form-control'}),
+            'password1' : forms.PasswordInput(attrs={'class': 'form-control'}),
+            'password2' : forms.PasswordInput(attrs={'class': 'form-control'}),
         }

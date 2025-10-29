@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
 from .models import Livro, Emprestimo
-from .forms import LivroForm, EmprestimoForm
+from .forms import LivroForm, EmprestimoForm, RegisterForm
 from django.urls import reverse_lazy
 # Create your views here.
 
@@ -106,7 +106,15 @@ class EmprestimoUpdateView(UpdateView):
         return super().form_valid(form)
 
 
+#Autenticação
 
+class RegisterView(CreateView):
+    template_name = 'accounts/register.html'
+    form_class = RegisterForm
+    success_url = reverse_lazy('login')
 
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
 
 
