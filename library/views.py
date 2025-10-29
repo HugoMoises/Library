@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Livro, Emprestimo
 from .forms import LivroForm, EmprestimoForm, RegisterForm
 from django.urls import reverse_lazy
@@ -29,13 +30,13 @@ class LivroListView(ListView):
         return livros
 
 
-class LivroCreateView(CreateView):
+class LivroCreateView(LoginRequiredMixin, CreateView):
     model = Livro
     template_name = 'livros/livro_create.html'
     form_class = LivroForm
     success_url = reverse_lazy('livros_list')
 
-class LivroUpdateView(UpdateView):
+class LivroUpdateView(LoginRequiredMixin, UpdateView):
     model = Livro
     template_name = 'livros/livro_update.html'
     form_class = LivroForm
@@ -46,13 +47,13 @@ class LivroDetailView(DetailView):
     model = Livro
     context_object_name = 'livro'
 
-class LivroDeleteView(DeleteView):
+class LivroDeleteView(LoginRequiredMixin, DeleteView):
     model = Livro
     success_url = reverse_lazy('livros_list')
 
 
 #Empréstimo
-class EmprestimoListView(ListView):
+class EmprestimoListView(LoginRequiredMixin, ListView):
     template_name = 'emprestimos/emprestimos_list.html'
     model = Emprestimo
     context_object_name = 'emprestimos'
@@ -71,7 +72,7 @@ class EmprestimoListView(ListView):
         return emprestimos
 
 
-class EmprestimoCreateView(CreateView):
+class EmprestimoCreateView(LoginRequiredMixin, CreateView):
     model = Emprestimo
     template_name = 'emprestimos/emprestimo_create.html'
     form_class = EmprestimoForm
@@ -89,7 +90,7 @@ class EmprestimoCreateView(CreateView):
             form.add_error(None, 'Não há cópia disponível para empréstimo deste livro.')
             return super().form_invalid(form)
 
-class EmprestimoUpdateView(UpdateView):
+class EmprestimoUpdateView(LoginRequiredMixin, UpdateView):
     model = Emprestimo
     template_name = 'emprestimos/emprestimo_update.html'
     form_class = EmprestimoForm

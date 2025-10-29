@@ -9,7 +9,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">Library</a>
+          <a class="navbar-brand" href="{% url 'index' %}">Library</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -21,6 +21,7 @@
               <li class="nav-item">
                 <a class="nav-link active" href="{% url 'livros_list' %}">Livros</a>
               </li>
+              {% if user.is_authenticated %}
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Empréstimos
@@ -30,6 +31,7 @@
                   <li><a class="dropdown-item" href="{% url 'emprestimo_create' %}">Registrar Empréstimo</a></li>
                 </ul>
               </li>
+              {% endif %}
             </ul>
           </div>
           {% if user.is_authenticated %}
