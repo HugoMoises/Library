@@ -19,47 +19,51 @@
             <th scope="col">Título</th>
             <th scope="col">Autor</th>
             <th scope="col">Gênero</th>
-            {% if user.is_authenticated and user|is_bibliotecario or user|is_admin %}
-            <th scope="col">Ações</th>
+            {% if user.is_authenticated %}
+              {% if user|is_admin or user|is_bibliotecario %}
+                <th scope="col">Ações</th>
+              {% endif %}
             {% endif %}
           </tr>
         </thead> 
         <tbody>
-            {% for livro in livros %}
+          {% for livro in livros %}
             <tr>
                 <td><a href="{% url 'livro_detail' livro.id%}" style="text-decoration: none;">{{livro.title}}</a></td>
                 <td>{{livro.author}}</td>
                 <td>{{livro.gender}}</td>
-                {% if user.is_authenticated and user|is_bibliotecario or user|is_admin %}
-                  <td>
-                    <a class="btn btn-primary" href="{% url 'livro_update' livro.id%}" role="button">Editar</a>
-                    {% if user|is_admin %}
-                      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{livro.id}}">Excluir</button>
-                      <div class="modal fade" id="deleteModal{{livro.id}}" tabindex="-1">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header bg-danger text-white">
-                              <h5 class="modal-title">Confirmar Exclusão</h5>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <p>Tem certeza que deseja excluir <strong>{{ livro.title }}</strong></p>
-                            </div>
-                            <div class="modal-footer">
-                              <form method="POST" action="{% url 'livro_delete' livro.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Excluir</button>
-                              </form>
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                {% if user.is_authenticated %}
+                  {% if user|is_admin or user|is_bibliotecario %}
+                    <td>
+                      <a class="btn btn-primary" href="{% url 'livro_update' livro.id%}" role="button">Editar</a>
+                      {% if user|is_admin %}
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{livro.id}}">Excluir</button>
+                        <div class="modal fade" id="deleteModal{{livro.id}}" tabindex="-1">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title">Confirmar Exclusão</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <p>Tem certeza que deseja excluir <strong>{{ livro.title }}</strong></p>
+                              </div>
+                              <div class="modal-footer">
+                                <form method="POST" action="{% url 'livro_delete' livro.id %}">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-danger">Excluir</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    {% endif %}
-                  </td>
+                      {% endif %}
+                    </td>
+                  {% endif %}
                 {% endif %}
             </tr>
-            {% endfor %}
+          {% endfor %}
         </tbody>
       </table>
       <div>
@@ -75,8 +79,10 @@
           {% endif %}
         </ul>
       </div>
-      {% if user.is_authenticated and user|is_bibliotecario %}
-      <a class="btn btn-secondary" href="{% url 'livro_create' %}" role="button">Adicionar Livro</a>  
+      {% if user.is_authenticated %}
+        {% if user|is_admin or user|is_bibliotecario %}
+          <a class="btn btn-secondary" href="{% url 'livro_create' %}" role="button">Adicionar Livro</a> 
+        {% endif %} 
       {% endif %}
       
 {% endblock %}
