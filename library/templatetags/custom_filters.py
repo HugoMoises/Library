@@ -1,11 +1,7 @@
 from django import template
+from library.utils import is_bibliotecario, is_admin
 
 register = template.Library()
 
-@register.filter
-def is_bibliotecario(user):
-    return user.groups.filter(name='Bibliotecário').exists()
-
-@register.filter
-def is_admin(user):
-    return user.groups.filter(name='Administrador').exists()
+register.filter('is_bibliotecario', is_bibliotecario)
+register.filter('is_admin', is_admin)

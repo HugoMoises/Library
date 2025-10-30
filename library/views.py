@@ -4,15 +4,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from .models import Livro, Emprestimo
 from .forms import LivroForm, EmprestimoForm, RegisterForm
+from .utils import is_bibliotecario, is_admin
 from django.urls import reverse_lazy
 # Create your views here.
-
-#Métodos de permissões
-def is_bibliotecario(user):
-    return user.groups.filter(name='Bibliotecário').exists()
-
-def is_admin(user):
-    return user.groups.filter(name='Administrador').exists()
 
 #Index
 class IndexView(TemplateView):
