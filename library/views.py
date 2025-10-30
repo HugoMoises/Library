@@ -1,10 +1,18 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import Group
 from .models import Livro, Emprestimo
 from .forms import LivroForm, EmprestimoForm, RegisterForm
 from django.urls import reverse_lazy
 # Create your views here.
+
+#Métodos de permissões
+def is_bibliotecario(user):
+    return user.groups.filter(name='Bibliotecário').exists()
+
+def is_admin(user):
+    return user.groups.filter(name='Administrador').exists()
 
 #Index
 class IndexView(TemplateView):
@@ -30,30 +38,42 @@ class LivroListView(ListView):
         return livros
 
 
-class LivroCreateView(LoginRequiredMixin, CreateView):
+class LivroCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Livro
     template_name = 'livros/livro_create.html'
     form_class = LivroForm
     success_url = reverse_lazy('livros_list')
+    
+    #Verifica se é bibliotecario ou admin
+    def test_func(self):
+        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
 
-class LivroUpdateView(LoginRequiredMixin, UpdateView):
+class LivroUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Livro
     template_name = 'livros/livro_update.html'
     form_class = LivroForm
     success_url = reverse_lazy('livros_list')
+
+    #Verifica se é bibliotecario ou admin
+    def test_func(self):
+        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
 
 class LivroDetailView(DetailView):
     template_name = 'livros/livro_detail.html'
     model = Livro
     context_object_name = 'livro'
 
-class LivroDeleteView(LoginRequiredMixin, DeleteView):
+class LivroDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Livro
     success_url = reverse_lazy('livros_list')
 
+    #Verifica se é admin
+    def test_func(self):
+        return is_admin(self.request.user)
+
 
 #Empréstimo
-class EmprestimoListView(LoginRequiredMixin, ListView):
+class EmprestimoListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     template_name = 'emprestimos/emprestimos_list.html'
     model = Emprestimo
     context_object_name = 'emprestimos'
@@ -70,9 +90,13 @@ class EmprestimoListView(LoginRequiredMixin, ListView):
             emprestimos = Emprestimo.objects.all()
         
         return emprestimos
+    
+    #Verifica se é bibliotecario ou admin
+    def test_func(self):
+        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
 
 
-class EmprestimoCreateView(LoginRequiredMixin, CreateView):
+class EmprestimoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Emprestimo
     template_name = 'emprestimos/emprestimo_create.html'
     form_class = EmprestimoForm
@@ -89,8 +113,13 @@ class EmprestimoCreateView(LoginRequiredMixin, CreateView):
         else:
             form.add_error(None, 'Não há cópia disponível para empréstimo deste livro.')
             return super().form_invalid(form)
+        
+    #Verifica se é bibliotecario ou admin
+    def test_func(self):
+        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
 
-class EmprestimoUpdateView(LoginRequiredMixin, UpdateView):
+
+class EmprestimoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Emprestimo
     template_name = 'emprestimos/emprestimo_update.html'
     form_class = EmprestimoForm
@@ -106,6 +135,10 @@ class EmprestimoUpdateView(LoginRequiredMixin, UpdateView):
         emprestimo.save()
         return super().form_valid(form)
 
+    #Verifica se é bibliotecario ou admin
+    def test_func(self):
+        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
+
 
 #Autenticação
 
@@ -115,7 +148,11 @@ class RegisterView(CreateView):
     success_url = reverse_lazy('login')
 
     def form_valid(self, form):
-        form.save()
+        user = form.save()
+
+        cliente_group, created = Group.objects.get_or_create(name='Cliente')
+        user.groups.add(cliente_group)
+
         return super().form_valid(form)
 
 

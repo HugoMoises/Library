@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,16 +22,16 @@
               <li class="nav-item">
                 <a class="nav-link active" href="{% url 'livros_list' %}">Livros</a>
               </li>
-              {% if user.is_authenticated %}
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Empréstimos
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="{% url 'emprestimos_list' %}">Empréstimos registrados</a></li>
-                  <li><a class="dropdown-item" href="{% url 'emprestimo_create' %}">Registrar Empréstimo</a></li>
-                </ul>
-              </li>
+              {% if user.is_authenticated and user|is_bibliotecario %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Empréstimos
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'emprestimos_list' %}">Empréstimos registrados</a></li>
+                    <li><a class="dropdown-item" href="{% url 'emprestimo_create' %}">Registrar Empréstimo</a></li>
+                  </ul>
+                </li>
               {% endif %}
             </ul>
           </div>
