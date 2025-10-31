@@ -17,6 +17,9 @@ class Livro(models.Model):
     avaiable = models.IntegerField()
     cover = models.ImageField(upload_to='images/', blank=True, null=True)
 
+    class Meta:
+        ordering = ['title']
+
     def emprestimo(self):
         if self.avaiable > 0:
             self.avaiable -= 1
