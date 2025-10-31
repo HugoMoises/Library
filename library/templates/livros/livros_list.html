@@ -69,13 +69,19 @@
       <div>
         <ul class="pagination justify-content-center">
           {% if page_obj.has_previous %}
-          <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}" tabindex="-1" aria-disabled="true">Anterior</a></li>
+            {% if request.GET.title %}
+              <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}&title={{request.GET.title}}" tabindex="-1" aria-disabled="true">Anterior</a></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}" tabindex="-1" aria-disabled="true">Anterior</a></li>
+            {% endif %}
           {% endif %}
           <li class="page-item"><span class="page-link"> Página: {{ page_obj.number }} de {{page_obj.paginator.num_pages}}</span></li>
           {% if page_obj.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{page_obj.next_page_number}}">Próxima</a>
-          </li>
+            {% if request.GET.title %}
+              <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}&title={{request.GET.title}}">Próxima</a></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}">Próxima</a></li>
+            {% endif %}
           {% endif %}
         </ul>
       </div>
