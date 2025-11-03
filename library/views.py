@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group
 from .models import Livro, Emprestimo
 from .forms import LivroForm, EmprestimoForm, EmprestimoStatusForm, RegisterForm
-from .utils import is_bibliotecario, is_admin
+from .utils import is_bibliotecario, is_admin, is_admin_or_bibliotecario
 from django.urls import reverse_lazy
 # Create your views here.
 
@@ -133,6 +134,7 @@ class EmprestimoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         return is_bibliotecario(self.request.user) or is_admin(self.request.user)
 
+#Funções para solicitar, aprovar ou recusar o empréstimo
 def solicitar_emprestimo(request, pk):
     livro = get_object_or_404(Livro, pk=pk)
 
@@ -142,6 +144,18 @@ def solicitar_emprestimo(request, pk):
         status='pending'
     )
     return redirect('livros_list')
+
+@user_passes_test(is_admin_or_bibliotecario)
+def aprovar_emprestimo(request, pk):
+    emprestimo = get_object_or_404(Emprestimo, pk=pk)
+    livro = emprestimo.book
+
+    if livro.avaiable > 0:
+        livro.emprestimo()
+        emprestimo.status = 'ongoing'
+        emprestimo.save()
+    return redirect('emprestimos_list')
+
 
 #Autenticação
 

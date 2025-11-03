@@ -31,9 +31,19 @@
                 <td>{{emprestimo.loan_date}}</td>    
                 <td>{{emprestimo.return_date}}</td>            
                 <td>{{emprestimo.status}}</td>
-                <td>
-                    <a class="btn btn-primary" href="{% url 'emprestimo_update' emprestimo.id%}" role="button">Editar</a>
-                </td>
+                  {% if not emprestimo.status == 'pending' %}
+                    <td>
+                        <a class="btn btn-primary" href="{% url 'emprestimo_update' emprestimo.id%}" role="button">Editar</td>a>
+                    </td>
+                  {% else %}
+                    <td>
+                        <form action="{% url 'aprovar_emprestimo' emprestimo.id%}" method="post">
+                          {% csrf_token %}
+                          <button class="btn btn-success" type="submit">Aprovar</button>
+                        </form>
+                        <a class="btn btn-danger" href="#" role="button">Rejeitar</a>
+                    </td>
+                  {% endif %}
             </tr>
             {% endfor %}
         </tbody>
