@@ -41,7 +41,7 @@ class LivroCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     
     #Verifica se é bibliotecario ou admin
     def test_func(self):
-        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
+        return is_admin_or_bibliotecario(self.request.user)
 
 class LivroUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Livro
@@ -51,7 +51,7 @@ class LivroUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     #Verifica se é bibliotecario ou admin
     def test_func(self):
-        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
+        return is_admin_or_bibliotecario
 
 class LivroDetailView(DetailView):
     template_name = 'livros/livro_detail.html'
@@ -88,7 +88,7 @@ class EmprestimoListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     
     #Verifica se é bibliotecario ou admin
     def test_func(self):
-        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
+        return is_admin_or_bibliotecario(self.request.user)
 
 
 class EmprestimoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -111,7 +111,7 @@ class EmprestimoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         
     #Verifica se é bibliotecario ou admin
     def test_func(self):
-        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
+        return is_admin_or_bibliotecario(self.request.user)
 
 
 class EmprestimoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -132,7 +132,7 @@ class EmprestimoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     #Verifica se é bibliotecario ou admin
     def test_func(self):
-        return is_bibliotecario(self.request.user) or is_admin(self.request.user)
+        return is_admin_or_bibliotecario(self.request.user)
 
 #Funções para solicitar, aprovar ou recusar o empréstimo
 def solicitar_emprestimo(request, pk):
