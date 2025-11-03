@@ -19,7 +19,7 @@ class LivroForm(forms.ModelForm):
             'cover' : forms.ClearableFileInput(attrs={'class': 'form-control-file', 'accept': 'image/*'}),
         }
 
-
+#Empréstimo
 class EmprestimoForm(forms.ModelForm):
     class Meta:
         model = Emprestimo
@@ -31,6 +31,17 @@ class EmprestimoForm(forms.ModelForm):
             'return_date' : forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'status' : forms.Select(attrs={'class': 'form-control'}),
         }
+
+class EmprestimoStatusForm(forms.ModelForm):
+    class Meta:
+        model = Emprestimo
+        fields = ['status']
+
+        widgets = {
+            'status' : forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    
 
 # Registro de Usuário
 class RegisterForm(UserCreationForm):

@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, ListView, CreateView, UpdateView,
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
 from .models import Livro, Emprestimo
-from .forms import LivroForm, EmprestimoForm, RegisterForm
+from .forms import LivroForm, EmprestimoForm, EmprestimoStatusForm, RegisterForm
 from .utils import is_bibliotecario, is_admin
 from django.urls import reverse_lazy
 # Create your views here.
@@ -116,7 +116,7 @@ class EmprestimoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 class EmprestimoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Emprestimo
     template_name = 'emprestimos/emprestimo_update.html'
-    form_class = EmprestimoForm
+    form_class = EmprestimoStatusForm
     success_url = reverse_lazy('emprestimos_list')
 
     def form_valid(self, form):
