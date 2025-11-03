@@ -20,9 +20,7 @@
             <th scope="col">Autor</th>
             <th scope="col">Gênero</th>
             {% if user.is_authenticated %}
-              {% if user|is_admin or user|is_bibliotecario %}
-                <th scope="col">Ações</th>
-              {% endif %}
+              <th scope="col">Ações</th>
             {% endif %}
           </tr>
         </thead> 
@@ -33,6 +31,14 @@
                 <td>{{livro.author}}</td>
                 <td>{{livro.gender}}</td>
                 {% if user.is_authenticated %}
+                  {% if user|is_cliente %}
+                  <td>
+                    <form action="{% url 'solicitar_emprestimo' livro.id %}" method="post">
+                      {% csrf_token %}
+                      <button class="btn btn-warning" type="submit">Solicitar Empréstimo</button>
+                    </form>
+                  </td>
+                  {% endif %}
                   {% if user|is_admin or user|is_bibliotecario %}
                     <td>
                       <a class="btn btn-primary" href="{% url 'livro_update' livro.id%}" role="button">Editar</a>

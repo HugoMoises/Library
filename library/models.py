@@ -1,13 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-class Pessoa(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15)
-    cpf = models.CharField(max_length=11, unique=True)
-
-    def __str__(self):
-        return self.name
+User = get_user_model()
 
 class Livro(models.Model):
     title = models.CharField(max_length=200)
@@ -16,6 +10,7 @@ class Livro(models.Model):
     publication_year = models.IntegerField()
     avaiable = models.IntegerField()
     cover = models.ImageField(upload_to='images/', blank=True, null=True)
+
 
     class Meta:
         ordering = ['title']
@@ -36,12 +31,14 @@ class Livro(models.Model):
 
 class Emprestimo(models.Model):
     STATUS = [
+        ('pending', 'Pending'),
         ('ongoing', 'Ongoing'),
         ('returned', 'Returned'),
         ('overdue', 'Overdue'),
+        ('refused', 'Refused'),
     ]
 
-    person = models.ForeignKey(Pessoa, on_delete=models.CASCADE)
+    person = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Livro, on_delete=models.CASCADE)
     loan_date = models.DateField(auto_now_add=True)
     return_date = models.DateField(null=True, blank=True)

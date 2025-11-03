@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import Group
@@ -133,6 +133,15 @@ class EmprestimoUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         return is_bibliotecario(self.request.user) or is_admin(self.request.user)
 
+def solicitar_emprestimo(request, pk):
+    livro = get_object_or_404(Livro, pk=pk)
+
+    Emprestimo.objects.create(
+        person=request.user,
+        book=livro,
+        status='pending'
+    )
+    return redirect('livros_list')
 
 #Autenticação
 
@@ -148,5 +157,7 @@ class RegisterView(CreateView):
         user.groups.add(cliente_group)
 
         return super().form_valid(form)
+
+
 
 

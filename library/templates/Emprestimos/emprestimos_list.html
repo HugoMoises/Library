@@ -17,6 +17,8 @@
         <tr>
             <th scope="col">Livro</th>
             <th scope="col">Usuário</th>
+            <th scope="col">Retirada</th>
+            <th scope="col">Devolução</th>
             <th scope="col">Status</th>
             <th scope="col">Ações</th>
         </tr>
@@ -25,7 +27,9 @@
             {% for emprestimo in emprestimos %}
             <tr>
                 <td>{{emprestimo.book.title}}</td>
-                <td>{{emprestimo.person.name}}</td>
+                <td>{{emprestimo.person}}</td>
+                <td>{{emprestimo.loan_date}}</td>    
+                <td>{{emprestimo.return_date}}</td>            
                 <td>{{emprestimo.status}}</td>
                 <td>
                     <a class="btn btn-primary" href="{% url 'emprestimo_update' emprestimo.id%}" role="button">Editar</a>
