@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from datetime import timedelta
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -17,6 +19,15 @@ class Livro(models.Model):
 
     def emprestimo(self):
         if self.avaiable > 0: 
+            loan_date = timezone.now().date()
+            return_date = loan_date + timedelta(days=30)
+            Emprestimo.objects.create(
+                person=User,
+                book=self,
+                loan_date=loan_date,
+                return_date=return_date,
+                status='pending'
+            )
             self.avaiable -= 1
             self.save()
             return True
@@ -40,9 +51,14 @@ class Emprestimo(models.Model):
 
     person = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Livro, on_delete=models.CASCADE)
-    loan_date = models.DateField(auto_now_add=True)
+    loan_date = models.DateField(default=timezone.now)
     return_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=15, choices=STATUS)
+
+    def save(self, *args, **kwargs):
+        if not self.return_date:
+            self.return_date = self.loan_date + timedelta(days=30)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Loan of {self.book.title} to {self.person.name}"
