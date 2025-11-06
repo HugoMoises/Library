@@ -18,16 +18,11 @@ class Livro(models.Model):
         ordering = ['title']
 
     def emprestimo(self):
+        loan_date = timezone.now()
+        return_date = loan_date + timedelta(days=30)
         if self.avaiable > 0: 
-            loan_date = timezone.now().date()
-            return_date = loan_date + timedelta(days=30)
-            Emprestimo.objects.create(
-                person=User,
-                book=self,
-                loan_date=loan_date,
-                return_date=return_date,
-                status='pending'
-            )
+            loan_date = loan_date,
+            return_date = return_date,
             self.avaiable -= 1
             self.save()
             return True
@@ -61,5 +56,5 @@ class Emprestimo(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Loan of {self.book.title} to {self.person.name}"
+        return f"Loan of {self.book.title} to {self.username}"
     
