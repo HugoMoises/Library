@@ -156,6 +156,13 @@ def aprovar_emprestimo(request, pk):
         emprestimo.save()
     return redirect('emprestimos_list')
 
+@user_passes_test(is_admin_or_bibliotecario)
+def recusar_emprestimo(request, pk):
+    emprestimo = get_object_or_404(Emprestimo, pk=pk)
+    emprestimo.status = 'refused'
+    emprestimo.save()
+    return redirect('emprestimos_list')
+
 
 #Autenticação
 

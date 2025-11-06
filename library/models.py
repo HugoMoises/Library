@@ -16,7 +16,7 @@ class Livro(models.Model):
         ordering = ['title']
 
     def emprestimo(self):
-        if self.avaiable > 0:
+        if self.avaiable > 0: 
             self.avaiable -= 1
             self.save()
             return True
