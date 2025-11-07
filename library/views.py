@@ -99,6 +99,7 @@ class MeusEmprestimos(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Emprestimo.objects.filter(person=self.request.user).order_by('id')
     
+    
 
 
 class EmprestimoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):

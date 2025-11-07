@@ -32,43 +32,66 @@
                 <td>{{livro.gender}}</td>
                 {% if user.is_authenticated %}
                   {% if user|is_cliente %}
-                  <td>
-                    <form action="{% url 'solicitar_emprestimo' livro.id %}" method="post">
-                      {% csrf_token %}
-                      <button class="btn btn-warning" type="submit">Solicitar Empréstimo</button>
-                    </form>
+                  <td>            
+                      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#solicitarLivroModal{{livro.id}}">Solicitar Empréstimo</button>
                   </td>
                   {% endif %}
                   {% if user|is_admin or user|is_bibliotecario %}
                     <td>
                       <a class="btn btn-primary" href="{% url 'livro_update' livro.id%}" role="button">Editar</a>
                       {% if user|is_admin %}
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{livro.id}}">Excluir</button>
-                        <div class="modal fade" id="deleteModal{{livro.id}}" tabindex="-1">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <div class="modal-header bg-danger text-white">
-                                <h5 class="modal-title">Confirmar Exclusão</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                <p>Tem certeza que deseja excluir <strong>{{ livro.title }}</strong></p>
-                              </div>
-                              <div class="modal-footer">
-                                <form method="POST" action="{% url 'livro_delete' livro.id %}">
-                                  {% csrf_token %}
-                                  <button type="submit" class="btn btn-danger">Excluir</button>
-                                </form>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteLivroModal{{livro.id}}">Excluir</button>
                       {% endif %}
                     </td>
                   {% endif %}
                 {% endif %}
             </tr>
+
+            <!-- Modais -->
+             
+            <!-- Confirmar exclusão de livro -->
+            <div class="modal fade" id="deleteLivroModal{{livro.id}}" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirmar Exclusão</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Tem certeza que deseja excluir <strong>{{ livro.title }}</strong>?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <form method="POST" action="{% url 'livro_delete' livro.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Confirmar Solicitação de empréstimo -->
+            <div class="modal fade" id="solicitarLivroModal{{livro.id}}" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">Confirmar Solicitação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Tem certeza que quer pegar <strong>{{ livro.title }}</strong> emprestado?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <form method="POST" action="{% url 'solicitar_emprestimo' livro.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-warning">Solicitar</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           {% endfor %}
         </tbody>
       </table>
@@ -96,5 +119,6 @@
           <a class="btn btn-secondary" href="{% url 'livro_create' %}" role="button">Adicionar Livro</a> 
         {% endif %} 
       {% endif %}
+      
       
 {% endblock %}
