@@ -23,6 +23,11 @@
                 <a class="nav-link active" href="{% url 'livros_list' %}">Livros</a>
               </li>
               {% if user.is_authenticated %}
+                {% if user|is_cliente %}
+                <li class="nav-item dropdown">
+                  <a class="nav-link active" href="{% url 'meus_emprestimos' %}">Meus Empréstimos</a>
+                </li>
+                {% endif %}
                 {% if user|is_admin or user|is_bibliotecario %}
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

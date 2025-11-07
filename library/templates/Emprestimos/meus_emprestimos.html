@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %} Emprestimos de Livros {% endblock %}
+
+{% block content %}
+    <h1>Meus Empréstimos</h1>
+    <hr>
+    <div class="container-fluid">
+        <form action="" method="get" class="d-flex">
+          <input class="form-control me-2" type="text" name="status" id="" value="{{request.GET.status}}" placeholder="Busque pelo status do empréstimo" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Buscar</button>
+          <a href="{% url 'meus_emprestimos' %}" class="btn btn-outline-dark">Limpar</a>
+        </form>
+    </div>
+    <hr>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Livro</th>
+            <th scope="col">Retirada</th>
+            <th scope="col">Devolução</th>
+            <th scope="col">Status</th>
+        </tr>
+        </thead> 
+        <tbody>
+            {% for emprestimo in emprestimos %}
+            <tr>
+                <td>{{emprestimo.book.title}}</td>
+                <td>{{emprestimo.loan_date}}</td>    
+                <td>{{emprestimo.return_date}}</td>            
+                <td>{{emprestimo.status}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endblock %}

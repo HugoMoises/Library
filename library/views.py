@@ -89,6 +89,16 @@ class EmprestimoListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     #Verifica se é bibliotecario ou admin
     def test_func(self):
         return is_admin_or_bibliotecario(self.request.user)
+    
+class MeusEmprestimos(LoginRequiredMixin, ListView):
+    template_name = 'emprestimos/meus_emprestimos.html'
+    model = Emprestimo
+    context_object_name = 'emprestimos'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Emprestimo.objects.filter(person=self.request.user).order_by('id')
+    
 
 
 class EmprestimoCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):

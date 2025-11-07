@@ -49,6 +49,7 @@ class Emprestimo(models.Model):
     loan_date = models.DateField(default=timezone.now)
     return_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=15, choices=STATUS)
+    
 
     def save(self, *args, **kwargs):
         if not self.return_date:
@@ -56,5 +57,5 @@ class Emprestimo(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"Loan of {self.book.title} to {self.username}"
+        return f"Loan of {self.book.title}"
     
