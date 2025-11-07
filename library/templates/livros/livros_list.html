@@ -27,7 +27,7 @@
         <tbody>
           {% for livro in livros %}
             <tr>
-                <td><a href="{% url 'livro_detail' livro.id%}" style="text-decoration: none;">{{livro.title}}</a></td>
+                <td><a style="text-decoration: none; color: inherit" href="{% url 'livro_detail' livro.id%}">{{livro.title}}</a></td>
                 <td>{{livro.author}}</td>
                 <td>{{livro.gender}}</td>
                 {% if user.is_authenticated %}
