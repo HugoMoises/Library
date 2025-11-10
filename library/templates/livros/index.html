@@ -1,12 +1,39 @@
 {% extends 'base.html' %}
-
-{% block title %} Página Inicial {% endblock %}
+{% block title %}Início{% endblock %}
 
 {% block content %}
-    <h1>Bem vindo a Biblioteca Online do Hugo</h1>
-    <p>Explore nossa coleção de livros e aproveite a leitura!</p>
-    <a href="{% url 'livros_list' %}">Ver livros disponíveis</a>
-    <a href="{% url 'livro_create' %}">Cadastrar Livro</a>
-    <a href="{% url 'emprestimos_list' %}">Ver empréstimos registrados</a>
-    <a href="{% url 'emprestimo_create' %}">Registrar empréstimo</a>
+<div class="text-center mb-5">
+    <h1 class="fw-bold text-primary">Bem-vindo à Biblioteca Online do Hugo</h1>
+    <p class="lead text-secondary">Descubra novos livros e mergulhe na leitura!</p>
+</div>
+
+<div class="container">
+    <h3 class="fw-semibold text-dark mb-4 text-center">
+        <i class="fa-solid fa-star text-warning me-2"></i> Livros em Destaque
+    </h3>
+
+    {% if livros_destaque %}
+        <div class="row g-4 justify-content-center">
+            {% for livro in livros_destaque %}
+                <div class="col-md-4 col-lg-3">
+                    <div class="card shadow-sm h-100 border-0 rounded-3 card-livro">
+                        {% if livro.cover %}
+                            <img src="{{ livro.cover.url }}" class="card-img-top rounded-top" alt="{{ livro.title }}">
+                        {% endif %}
+                        <div class="card-body text-center">
+                            <h5 class="card-title fw-semibold">{{ livro.title }}</h5>
+                            <p class="text-muted mb-1"><i class="fa-solid fa-user me-1"></i>{{ livro.author }}</p>
+                            <p class="text-muted small mb-3"><i class="fa-solid fa-calendar me-1"></i>{{ livro.publication_year }}</p>
+                            <a href="{% url 'livro_detail' livro.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="fa-solid fa-book-open me-1"></i> Ver detalhes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-center text-muted mt-4">Nenhum livro em destaque no momento.</p>
+    {% endif %}
+</div>
 {% endblock %}

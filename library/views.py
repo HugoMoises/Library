@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import TemplateView, ListView, CreateView, UpdateView, DetailView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import Group
@@ -10,8 +10,13 @@ from django.urls import reverse_lazy
 # Create your views here.
 
 #Index
-class IndexView(TemplateView):
+class IndexView(ListView):
+    model = Livro
     template_name = 'livros/index.html'
+    context_object_name = 'livros_destaque'
+
+    def get_queryset(self):
+        return Livro.objects.all().order_by('-id')[:4]
 
 #Livros
 class LivroListView(ListView):

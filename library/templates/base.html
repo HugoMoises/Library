@@ -1,69 +1,86 @@
+{% load static %}
 {% load custom_filters %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} {% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'index' %}">Library</a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav mx-auto">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="{% url 'livros_list' %}">Livros</a>
-              </li>
-              {% if user.is_authenticated %}
-                {% if user|is_cliente %}
-                <li class="nav-item dropdown">
-                  <a class="nav-link active" href="{% url 'meus_emprestimos' %}">Meus Empréstimos</a>
-                </li>
-                {% endif %}
-                {% if user|is_admin or user|is_bibliotecario %}
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Empréstimos
-                    </a>
-                    <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="{% url 'emprestimos_list' %}">Empréstimos registrados</a></li>
-                      <li><a class="dropdown-item" href="{% url 'emprestimo_create' %}">Registrar Empréstimo</a></li>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand fw-semibold" href="{% url 'index' %}">
+                <i class="fa-solid fa-book-open-reader me-2"></i>Library
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'index' %}"><i class="fa-solid fa-house me-1"></i>Início</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'livros_list' %}"><i class="fa-solid fa-book me-1"></i>Livros</a></li>
+
+                    {% if user.is_authenticated %}
+                        {% if user|is_cliente %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'meus_emprestimos' %}">
+                                    <i class="fa-solid fa-clock-rotate-left me-1"></i>Meus Empréstimos
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if user|is_admin or user|is_bibliotecario %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-handshake me-1"></i>Empréstimos
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="{% url 'emprestimos_list' %}"><i class="fa-solid fa-list me-1"></i>Registrados</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'emprestimo_create' %}"><i class="fa-solid fa-plus me-1"></i>Novo Empréstimo</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+
+                {% if user.is_authenticated %}
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-user me-1"></i>{{ user.get_username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <li><button type="submit" class="dropdown-item"><i class="fa-solid fa-right-from-bracket me-1"></i>Sair</button></li>
+                                </form>
+                            </ul>
+                        </li>
                     </ul>
-                  </li>
+                {% else %}
+                    <a class="btn btn-success ms-3" href="{% url 'login' %}">
+                        <i class="fa-solid fa-right-to-bracket me-1"></i>Login
+                    </a>
                 {% endif %}
-              {% endif %}
-            </ul>
-          </div>
-          {% if user.is_authenticated %}
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ user.get_username }}
-              </a>
-              <ul class="dropdown-menu">
-                <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <li><button type="submit" class="dropdown-item">Sair</button></li> 
-                </form>
-              </ul>
-            </li>
-          </ul>
-          {% else %}
-          <a class="btn btn-success" href="{% url 'login' %}">Login</a>
-          {% endif %}
+            </div>
         </div>
-      </nav>
-    {% block content %}
-    
-    {% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    </nav>
+
+    <main class="container py-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p class="mb-0">&copy; {{ now|date:"Y" }} Biblioteca Online — Desenvolvido por Hugo</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

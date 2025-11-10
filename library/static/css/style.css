@@ -1,0 +1,97 @@
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === Navbar === */
+nav.navbar {
+    background-color: #1e3a8a !important; /* Azul escuro */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand {
+    color: #f8f9fa !important;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+}
+
+nav .nav-link {
+    color: #f8f9fa !important;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+nav .nav-link:hover,
+nav .dropdown-item:hover {
+    color: #9ec0ec !important;
+}
+
+/* === Botões === */
+.btn-success {
+    background-color: #22c55e;
+    border: none;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    background-color: #16a34a;
+}
+
+/* === Conteúdo principal === */
+main {
+    flex: 1;
+    padding: 2rem 0;
+}
+
+/* === Rodapé === */
+footer {
+    background-color: #1e3a8a;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: auto;
+}
+
+a {
+    text-decoration: none;
+}
+
+i {
+    color: inherit;
+}
+
+/* === Cards dos livros (index) === */
+.card-livro {
+    transition: all 0.3s ease;
+}
+
+.card-livro:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+.card-livro img {
+    height: 240px;
+    object-fit: cover;
+}
+
+.card-livro .card-body {
+    background-color: #fff;
+    border-top: 1px solid #f1f1f1;
+}
+
+
+
+/* === Responsividade === */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.1rem;
+    }
+
+    main {
+        padding: 1rem;
+    }
+}
