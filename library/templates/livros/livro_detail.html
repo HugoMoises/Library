@@ -1,30 +1,69 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 
 {% block title %} Detalhes do Livro {% endblock %}
 
 {% block content %}
-<div class="container mt-5 d-flex justify-content-center">
-    <div class="card shadow-sm" style="max-width: 700px;">
-        <div class="row g-0">
-            <div class="col-md-4">
-                {% if livro.cover %}
-                    <img src="{{ livro.cover.url }}" class="img-fluid rounded-start" alt="Capa do Livro">
-                {% else %}
-                    <img src="{% static 'images/default_cover.png' %}" class="img-fluid rounded-start" alt="Capa não disponível">
-                {% endif %}
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h3 class="card-title fw-bold mb-3">{{ livro.title }}</h3>
-                    <p class="mb-2"><strong>Autor:</strong> {{ livro.author }}</p>
-                    <p class="mb-2"><strong>Gênero:</strong> {{ livro.gender }}</p>
-                    <p class="mb-2"><strong>Ano de Publicação:</strong> {{ livro.year_publication }}</p>
-                    <p class="mb-2"><strong>Disponível:</strong> {{ livro.avaiable }}</p>
-                    <a href="{% url 'livros_list' %}" class="btn btn-primary mt-3">Voltar à lista</a>
-                </div>
-            </div>
+<div class="container my-5">
+  <div class="text-center mb-4">
+    <h2 class="fw-bold text-primary">
+      <i class="fas fa-book-open me-2"></i>Detalhes do Livro
+    </h2>
+    <hr class="w-25 mx-auto opacity-75">
+  </div>
+
+  <div class="card mx-auto shadow-lg border-0 rounded-4 overflow-hidden" style="max-width: 750px;">
+    <div class="row g-0">
+      <div class="col-md-4 bg-light d-flex align-items-center justify-content-center p-3">
+        {% if livro.cover %}
+          <img src="{{ livro.cover.url }}" class="img-fluid rounded shadow-sm" alt="Capa do Livro">
+        {% else %}
+          <img src="#" class="img-fluid rounded shadow-sm" alt="Capa não disponível">
+        {% endif %}
+      </div>
+
+      <div class="col-md-8">
+        <div class="card-body p-4">
+          <h3 class="card-title fw-bold mb-3 text-dark">{{ livro.title }}</h3>
+          <ul class="list-unstyled mb-4">
+            <li><strong>Autor:</strong> {{ livro.author }}</li>
+            <li><strong>Gênero:</strong> {{ livro.gender }}</li>
+            <li><strong>Ano de Publicação:</strong> {{ livro.publication_year }}</li>
+            <li>
+              <strong>Disponibilidade:</strong>
+              {% if livro.avaiable > 0 %}
+                <span class="badge bg-success ms-1">Disponível</span>
+              {% else %}
+                <span class="badge bg-danger ms-1">Indisponível</span>
+              {% endif %}
+            </li>
+          </ul>
+
+          <div class="d-flex gap-2">
+            <a href="{% url 'livros_list' %}" class="btn btn-outline-primary">
+              <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+
+            {% if user.is_authenticated %}
+              {% if user|is_admin or user|is_bibliotecario %}
+                <a href="{% url 'livro_update' livro.id %}" class="btn btn-warning">
+                  <i class="fas fa-edit"></i> Editar
+                </a>
+              {% endif %}
+              {% if user|is_cliente and livro.avaiable > 0 %}
+                <form method="POST" action="{% url 'solicitar_emprestimo' livro.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success">
+                    <i class="fas fa-hand-holding"></i> Solicitar Empréstimo
+                  </button>
+                </form>
+              {% endif %}
+            {% endif %}
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 {% endblock %}

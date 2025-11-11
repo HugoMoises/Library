@@ -1,64 +1,115 @@
 {% extends 'base.html' %}
-{% block title %} Livros Disponíveis {% endblock %}
+{% block title %}Livros Disponíveis{% endblock %}
 {% load custom_filters %}
 
 {% block content %}
-    <h1>Livros disponíveis para empréstimo</h1>
-    <hr>
-    <div class="container-fluid">
-      <form action="" method="get" class="d-flex">
-        <input class="form-control me-2" type="text" name="title" id="" value="{{request.GET.title}}" placeholder="Busque pelo título do Livro" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Buscar</button>
-        <a href="{% url 'livros_list' %}" class="btn btn-outline-dark">Limpar</a>
-      </form>
+  <div class="container mt-5">
+
+    <!-- Cabeçalho -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <div>
+        <h1 class="fw-bold text-primary mb-0">📚 Livros Disponíveis</h1>
+        <p class="text-muted mb-0">Confira os livros cadastrados na biblioteca</p>
+      </div>
+
+      {% if user.is_authenticated %}
+        {% if user|is_admin or user|is_bibliotecario %}
+        <a href="{% url 'livro_create' %}" class="btn btn-primary d-flex align-items-center">
+          <i class="fa-solid fa-plus me-2"></i> Adicionar Livro
+        </a>
+        {% endif %}
+      {% endif %}
     </div>
-    <hr>
-    <table class="table">
-        <thead>
+
+    <!-- Barra de busca -->
+    <form action="" method="get" class="d-flex align-items-center mb-4" role="search">
+      <input class="form-control me-2" type="text" name="title" value="{{ request.GET.title }}" placeholder="Busque pelo título do livro" aria-label="Search">
+    <button class="btn btn-outline-success btn-sm me-2" type="submit">
+      <i class="fas fa-search"></i> Buscar
+    </button>
+    <a href="{% url 'livros_list' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-eraser"></i> Limpar
+    </a>
+</form>
+
+
+    <!-- Tabela estilizada -->
+    <div class="table-responsive">
+      <table class="table table-hover align-middle shadow-sm rounded-3 overflow-hidden">
+        <thead class="table-primary">
           <tr>
             <th scope="col">Título</th>
             <th scope="col">Autor</th>
             <th scope="col">Gênero</th>
             {% if user.is_authenticated %}
-              <th scope="col">Ações</th>
+              <th scope="col" class="text-center">Ações</th>
             {% endif %}
           </tr>
-        </thead> 
+        </thead>
         <tbody>
           {% for livro in livros %}
             <tr>
-                <td><a style="text-decoration: none; color: inherit" href="{% url 'livro_detail' livro.id%}">{{livro.title}}</a></td>
-                <td>{{livro.author}}</td>
-                <td>{{livro.gender}}</td>
-                {% if user.is_authenticated %}
+              <td>
+                <a href="{% url 'livro_detail' livro.id %}" class="text-decoration-none fw-semibold text-dark hover-link">
+                  {{ livro.title }}
+                </a>
+              </td>
+              <td>{{ livro.author }}</td>
+              <td>{{ livro.gender }}</td>
+
+              {% if user.is_authenticated %}
+                <td class="text-center">
                   {% if user|is_cliente %}
-                  <td>            
-                      <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#solicitarLivroModal{{livro.id}}">Solicitar Empréstimo</button>
-                  </td>
+                    <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#solicitarLivroModal{{ livro.id }}">
+                      <i class="fa-solid fa-hand-holding me-1"></i> Solicitar
+                    </button>
                   {% endif %}
                   {% if user|is_admin or user|is_bibliotecario %}
-                    <td>
-                      <a class="btn btn-primary" href="{% url 'livro_update' livro.id%}" role="button">Editar</a>
-                      {% if user|is_admin %}
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteLivroModal{{livro.id}}">Excluir</button>
-                      {% endif %}
-                    </td>
+                    <a href="{% url 'livro_update' livro.id %}" class="btn btn-sm btn-primary">
+                      <i class="fa-solid fa-pen"></i>
+                    </a>
+                    {% if user|is_admin %}
+                      <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteLivroModal{{ livro.id }}">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    {% endif %}
                   {% endif %}
-                {% endif %}
+                </td>
+              {% endif %}
             </tr>
 
-            <!-- Modais -->
-             
-            <!-- Confirmar exclusão de livro -->
-            <div class="modal fade" id="deleteLivroModal{{livro.id}}" tabindex="-1">
+            <!-- Modal Solicitar -->
+            <div class="modal fade" id="solicitarLivroModal{{ livro.id }}" tabindex="-1">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header bg-warning text-white">
+                    <h5 class="modal-title">Confirmar Solicitação</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    Deseja solicitar o livro <strong>{{ livro.title }}</strong>?
+                  </div>
+                  <div class="modal-footer">
+                    <form method="POST" action="{% url 'solicitar_emprestimo' livro.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-warning">Confirmar</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal Excluir -->
+            <div class="modal fade" id="deleteLivroModal{{ livro.id }}" tabindex="-1">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title">Confirmar Exclusão</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                   </div>
                   <div class="modal-body">
-                    <p>Tem certeza que deseja excluir <strong>{{ livro.title }}</strong>?</p>
+                    Tem certeza que deseja excluir <strong>{{ livro.title }}</strong>?
                   </div>
                   <div class="modal-footer">
                     <form method="POST" action="{% url 'livro_delete' livro.id %}">
@@ -70,55 +121,36 @@
                 </div>
               </div>
             </div>
-
-            <!-- Confirmar Solicitação de empréstimo -->
-            <div class="modal fade" id="solicitarLivroModal{{livro.id}}" tabindex="-1">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header bg-warning text-white">
-                    <h5 class="modal-title">Confirmar Solicitação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <p>Tem certeza que quer pegar <strong>{{ livro.title }}</strong> emprestado?</p>
-                  </div>
-                  <div class="modal-footer">
-                    <form method="POST" action="{% url 'solicitar_emprestimo' livro.id %}">
-                      {% csrf_token %}
-                      <button type="submit" class="btn btn-warning">Solicitar</button>
-                    </form>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="text-center text-muted py-4">Nenhum livro encontrado.</td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
-      <div>
-        <ul class="pagination justify-content-center">
-          {% if page_obj.has_previous %}
-            {% if request.GET.title %}
-              <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}&title={{request.GET.title}}" tabindex="-1" aria-disabled="true">Anterior</a></li>
-            {% else %}
-              <li class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}" tabindex="-1" aria-disabled="true">Anterior</a></li>
-            {% endif %}
-          {% endif %}
-          <li class="page-item"><span class="page-link"> Página: {{ page_obj.number }} de {{page_obj.paginator.num_pages}}</span></li>
-          {% if page_obj.has_next %}
-            {% if request.GET.title %}
-              <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}&title={{request.GET.title}}">Próxima</a></li>
-            {% else %}
-              <li class="page-item"><a class="page-link" href="?page={{page_obj.next_page_number}}">Próxima</a></li>
-            {% endif %}
-          {% endif %}
-        </ul>
-      </div>
-      {% if user.is_authenticated %}
-        {% if user|is_admin or user|is_bibliotecario %}
-          <a class="btn btn-secondary" href="{% url 'livro_create' %}" role="button">Adicionar Livro</a> 
-        {% endif %} 
-      {% endif %}
-      
-      
+    </div>
+
+    <!-- Paginação -->
+    {% if is_paginated %}
+      <ul class="pagination justify-content-center mt-4">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}">
+              Anterior
+            </a>
+          </li>
+        {% endif %}
+        <li class="page-item disabled">
+          <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.title %}&title={{ request.GET.title }}{% endif %}">
+              Próxima
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  </div>
 {% endblock %}
