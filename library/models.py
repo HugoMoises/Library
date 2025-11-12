@@ -27,7 +27,7 @@ class Livro(models.Model):
             self.save()
             return True
         return False
-
+    
     def devolver(self):
         self.avaiable += 1
         self.save()

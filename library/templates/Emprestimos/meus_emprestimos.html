@@ -19,6 +19,7 @@
           <th scope="col">Retirada</th>
           <th scope="col">Devolução</th>
           <th scope="col">Status</th>
+          <th scope="col">Ações</th>
         </tr>
       </thead>
       <tbody>
@@ -41,7 +42,37 @@
               <span class="badge bg-warning text-dark">Pending</span>
             {% endif %}
           </td>
+          <td>
+            {% if emprestimo.status == "ongoing" or emprestimo.status == "overdue" %}
+                <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#devolverLivroModal{{ emprestimo.id }}">
+                    <i class="fa-solid fa-handshake"></i> Devolver
+                </button>
+            {% endif %}
+          </td>
         </tr>
+
+        <!-- Modal Devolver -->
+        <div class="modal fade" id="devolverLivroModal{{ emprestimo.id }}" tabindex="-1">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                  <h5 class="modal-title">Confirmar Solicitação</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  Deseja devolver o livro <strong>{{ emprestimo.book.title }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <form method="POST" action="{% url 'devolver_livro' emprestimo.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Confirmar</button>
+                  </form>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
         {% endfor %}
       </tbody>
     </table>

@@ -179,6 +179,19 @@ def recusar_emprestimo(request, pk):
     emprestimo.save()
     return redirect('emprestimos_list')
 
+#Devolver Livro
+def devolver_livro(request, pk):
+    emprestimo = get_object_or_404(Emprestimo, pk=pk)
+    livro = emprestimo.book
+
+
+    if emprestimo.status == 'ongoing' or emprestimo.status == 'overdue':
+        livro.devolver()
+        emprestimo.status = 'returned'
+        emprestimo.save()
+
+    return redirect('meus_emprestimos')
+    
 
 #Autenticação
 

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import IndexView, LivroListView, LivroCreateView, LivroUpdateView, LivroDetailView, LivroDeleteView, EmprestimoCreateView, EmprestimoListView, MeusEmprestimos, EmprestimoUpdateView, RegisterView, solicitar_emprestimo, aprovar_emprestimo, recusar_emprestimo
+from .views import IndexView, LivroListView, LivroCreateView, LivroUpdateView, LivroDetailView, LivroDeleteView, EmprestimoCreateView, EmprestimoListView, MeusEmprestimos, EmprestimoUpdateView, RegisterView, solicitar_emprestimo, aprovar_emprestimo, recusar_emprestimo, devolver_livro
 #Autenticação
 from django.contrib.auth.views import LoginView, LogoutView
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     path('livros/update/<int:pk>/', LivroUpdateView.as_view(), name='livro_update'),
     path('livros/detail/<int:pk>/', LivroDetailView.as_view(), name='livro_detail'),
     path('livros/delete/<int:pk>', LivroDeleteView.as_view(), name='livro_delete'),
+    path('devolver_livro/<int:pk>/', devolver_livro, name='devolver_livro'),
 
     #Empréstimo
     path('emprestimos', EmprestimoListView.as_view(), name='emprestimos_list'),
