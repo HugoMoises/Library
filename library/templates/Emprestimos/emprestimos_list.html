@@ -1,90 +1,140 @@
 {% extends 'base.html' %}
-{% block title %} Emprestimos de Livros {% endblock %}
+{% block title %} Empréstimos de Livros {% endblock %}
 
 {% block content %}
-    <h1>Empréstimos registrados</h1>
-    <hr>
-    <div class="container-fluid">
-        <form action="" method="get" class="d-flex">
-          <input class="form-control me-2" type="text" name="status" id="" value="{{request.GET.status}}" placeholder="Busque pelo status do empréstimo" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Buscar</button>
-          <a href="{% url 'emprestimos_list' %}" class="btn btn-outline-dark">Limpar</a>
-        </form>
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+      <h2 class="text-center mb-4 fw-bold text-primary">
+        <i class="fas fa-book-reader me-2"></i>Empréstimos Registrados
+      </h2>
     </div>
-    <hr>
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Livro</th>
-            <th scope="col">Usuário</th>
-            <th scope="col">Retirada</th>
-            <th scope="col">Devolução</th>
-            <th scope="col">Status</th>
-            <th scope="col">Ações</th>
-        </tr>
-        </thead> 
-        <tbody>
-            {% for emprestimo in emprestimos %}
-            <tr>
-                <td>{{emprestimo.book.title}}</td>
-                <td>{{emprestimo.person}}</td>
-                <td>{{emprestimo.loan_date}}</td>    
-                <td>{{emprestimo.return_date}}</td>            
-                <td>{{emprestimo.status}}</td>
-                  {% if not emprestimo.status == 'pending' %}
-                    <td>
-                        <a class="btn btn-primary" href="{% url 'emprestimo_update' emprestimo.id%}" role="button">Editar</td>
-                    </td>
-                  {% else %}
-                    <td>
-                        <form action="{% url 'aprovar_emprestimo' emprestimo.id%}" method="post">
-                          {% csrf_token %}
-                          <button class="btn btn-success" type="submit">Aprovar</button>
-                        </form>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#recusarEmprestimoModal{{emprestimo.id}}">Recusar</button>
-                       
-                    </td>
-                  {% endif %}
-            </tr>
-
-
-              <!-- Modal para confirmar recusa da solicitação de empréstimo -->
-              <div class="modal fade" id="recusarEmprestimoModal{{emprestimo.id}}" tabindex="-1">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header bg-danger text-white">
-                      <h5 class="modal-title">Recusar Empréstimo</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <p>Tem certeza que deseja recusar o empréstimo do livro <strong>{{ emprestimo.book.title }}</strong> solicitado por <strong>{{emprestimo.person}}</strong>?</p>
-                    </div>
-                    <div class="modal-footer">
-                      <form method="POST" action="{% url 'recusar_emprestimo' emprestimo.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Recusar</button>
-                      </form>
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            {% endfor %}
-        </tbody>
-    </table>
-    <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{page_obj.previous_page_number}}">Anterior</a>
-        </li>
-        {% endif %}
-        <li class="page-item"><span class="page-link">Página: {{page_obj.number}} de {{page_obj.paginator.num_pages}}</span></li>
     
-        {% if page_obj.has_next %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{page_obj.next_page_number}}">Próxima</a>
-        </li>
-        {% endif %}
-      </ul>
-    <a class="btn btn-secondary" href="{% url 'emprestimo_create' %}" role="button">Registrar Empréstimo</a>
+    <a href="{% url 'emprestimo_create' %}" class="btn btn-primary d-flex align-items-center">
+      <i class="fa-solid fa-plus me-2"></i> Registrar Empréstimo
+    </a>
+  </div>
+
+  <!-- Filtro de busca -->
+  <form action="" method="get" class="d-flex align-items-center mb-4" role="search">
+    <input class="form-control me-2" type="text" name="status" value="{{ request.GET.status }}" placeholder="Busque pelo status do empréstimo" aria-label="Search">
+  <button class="btn btn-outline-success btn-sm me-2" type="submit">
+    <i class="fas fa-search"></i> Buscar
+  </button>
+  <a href="{% url 'emprestimos_list' %}" class="btn btn-outline-secondary btn-sm">
+    <i class="fas fa-eraser"></i> Limpar
+  </a>
+  </form>
+
+  <!-- Tabela de empréstimos -->
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Livro</th>
+          <th scope="col">Usuário</th>
+          <th scope="col">Retirada</th>
+          <th scope="col">Devolução</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for emprestimo in emprestimos %}
+        <tr>
+          <td>{{ emprestimo.book.title }}</td>
+          <td>{{ emprestimo.person }}</td>
+          <td>{{ emprestimo.loan_date }}</td>
+          <td>{{ emprestimo.return_date }}</td>
+          <td>
+            {% if emprestimo.status == "returned" %}
+              <span class="badge bg-success">Returned</span>
+            {% elif emprestimo.status == "ongoing" %}
+              <span class="badge bg-info text-dark">Ongoing</span>
+            {% elif emprestimo.status == "refused" %}
+              <span class="badge bg-danger">Refused</span>
+            {% elif emprestimo.status == "overdue" %}
+              <span class="badge bg-secondary">Overdue</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </td>
+
+          <td class="text-center">
+            {% if not emprestimo.status == 'pending' %}
+              <a href="{% url 'emprestimo_update' emprestimo.id %}" class="btn btn-primary btn-sm">
+                <i class="fas fa-pencil-alt"></i> Editar
+              </a>
+            {% else %}
+              <form action="{% url 'aprovar_emprestimo' emprestimo.id %}" method="post" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-success btn-sm" type="submit">
+                  <i class="fas fa-check"></i> Aprovar
+                </button>
+              </form>
+
+              <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#recusarEmprestimoModal{{ emprestimo.id }}">
+                <i class="fas fa-times"></i> Recusar
+              </button>
+            {% endif %}
+          </td>
+        </tr>
+
+        <!-- Modal de confirmação da recusa -->
+        <div class="modal fade" id="recusarEmprestimoModal{{ emprestimo.id }}" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Recusar Empréstimo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  Tem certeza que deseja recusar o empréstimo do livro
+                  <strong>{{ emprestimo.book.title }}</strong> solicitado por
+                  <strong>{{ emprestimo.person }}</strong>?
+                </p>
+              </div>
+              <div class="modal-footer">
+                <form method="POST" action="{% url 'recusar_emprestimo' emprestimo.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-times-circle"></i> Recusar
+                  </button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                  <i class="fas fa-ban"></i> Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginação -->
+  <ul class="pagination justify-content-center mt-4">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+          <i class="fas fa-chevron-left"></i> Anterior
+        </a>
+      </li>
+    {% endif %}
+
+    <li class="page-item disabled">
+      <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+          Próxima <i class="fas fa-chevron-right"></i>
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+</div>
 {% endblock %}

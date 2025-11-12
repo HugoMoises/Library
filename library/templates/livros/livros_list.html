@@ -11,6 +11,7 @@
         <h1 class="fw-bold text-primary mb-0">📚 Livros Disponíveis</h1>
         <p class="text-muted mb-0">Confira os livros cadastrados na biblioteca</p>
       </div>
+      
 
       {% if user.is_authenticated %}
         {% if user|is_admin or user|is_bibliotecario %}
@@ -30,7 +31,7 @@
     <a href="{% url 'livros_list' %}" class="btn btn-outline-secondary btn-sm">
       <i class="fas fa-eraser"></i> Limpar
     </a>
-</form>
+    </form>
 
 
     <!-- Tabela estilizada -->
