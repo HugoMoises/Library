@@ -49,6 +49,9 @@ class Emprestimo(models.Model):
     loan_date = models.DateField(default=timezone.now)
     return_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=15, choices=STATUS)
+
+    class Meta:
+        ordering = ['-loan_date']
     
 
     def save(self, *args, **kwargs):

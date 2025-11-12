@@ -85,7 +85,7 @@ class EmprestimoListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         status = self.request.GET.get('status')
 
         if status:
-            emprestimos = Emprestimo.objects.filter(status__icontains=status) 
+            emprestimos = Emprestimo.objects.filter(status__icontains=status)
         else:
             emprestimos = Emprestimo.objects.all()
         
@@ -102,7 +102,7 @@ class MeusEmprestimos(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return Emprestimo.objects.filter(person=self.request.user).order_by('id')
+        return Emprestimo.objects.filter(person=self.request.user).order_by('-id')
     
     
 

@@ -1,43 +1,73 @@
 {% extends 'base.html' %}
-{% block title %} Emprestimos de Livros {% endblock %}
+{% block title %} Empréstimos de Livros {% endblock %}
 
 {% block content %}
-    <h1>Meus Empréstimos</h1>
+<div class="container my-5">
+  <h2 class="text-center mb-4 fw-bold text-primary">
+    <i class="fas fa-book-reader me-2"></i>Meus Empréstimos
+  </h2>
+  <hr class="opacity-75 w-50 mx-auto mb-4">
 
-    <hr>
-    <table class="table">
-        <thead>
+
+  <!-- Tabela de empréstimos -->
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
         <tr>
-            <th scope="col">Livro</th>
-            <th scope="col">Retirada</th>
-            <th scope="col">Devolução</th>
-            <th scope="col">Status</th>
+          <th scope="col">Livro</th>
+          <th scope="col">Usuário</th>
+          <th scope="col">Retirada</th>
+          <th scope="col">Devolução</th>
+          <th scope="col">Status</th>
         </tr>
-        </thead> 
-        <tbody>
-            {% for emprestimo in emprestimos %}
-            <tr>
-                <td>{{emprestimo.book.title}}</td>
-                <td>{{emprestimo.loan_date}}</td>    
-                <td>{{emprestimo.return_date}}</td>            
-                <td>{{emprestimo.status}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+      </thead>
+      <tbody>
+        {% for emprestimo in emprestimos %}
+        <tr>
+          <td>{{ emprestimo.book.title }}</td>
+          <td>{{ emprestimo.person }}</td>
+          <td>{{ emprestimo.loan_date }}</td>
+          <td>{{ emprestimo.return_date }}</td>
+          <td>
+            {% if emprestimo.status == "returned" %}
+              <span class="badge bg-success">Returned</span>
+            {% elif emprestimo.status == "ongoing" %}
+              <span class="badge bg-info text-dark">Ongoing</span>
+            {% elif emprestimo.status == "refused" %}
+              <span class="badge bg-danger">Refused</span>
+            {% elif emprestimo.status == "overdue" %}
+              <span class="badge bg-secondary">Overdue</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Pending</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
-    <div>
-        <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{page_obj.previous_page_number}}">Anterior</a>
-            </li>
-            {% endif %}
-            <li class="page-item"><a class="page-link" href="">Página: {{page_obj.number}} de {{page_obj.paginator.num_pages}}</a></li>
-            {% if page_obj.has_next %}
-            <li class="page-item">
-                <a class="page-link" href="?page={{page_obj.next_page_number}}">Próxima</a>
-            </li>
-            {% endif %}
-        </ul>
-    </div>
-    {% endblock %}
+  </div>
+
+  <!-- Paginação -->
+  <ul class="pagination justify-content-center mt-4">
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+          <i class="fas fa-chevron-left"></i> Anterior
+        </a>
+      </li>
+    {% endif %}
+
+    <li class="page-item disabled">
+      <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+    </li>
+
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+          Próxima <i class="fas fa-chevron-right"></i>
+        </a>
+      </li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}
